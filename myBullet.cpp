@@ -5,9 +5,9 @@ using namespace sf;
 myBullet::myBullet(const Vector2f& initPos) : bbulletActive(true), bulletSpeed(1.0f){
 
     if(!bulletTexture.loadFromFile("pic_myBullet.png")){
-	printf("Bullet is not loading\n");
+        printf("Bullet is not loading\n");
         bbulletActive = false;
-	return;
+        return;
     }
     bulletTexture.setSmooth(true);
     bulletSprite.setTexture(bulletTexture);

@@ -6,7 +6,7 @@ using namespace sf;
 
 // 생성자 구현
 Meteor::Meteor(const Vector2f& startPos) : bmeteorActive(true), meteorSpeed(0.0f, 0.12f) {
-    if (!meteorTexture.loadFromFile("pic_ufo.png")) {
+    if (!meteorTexture.loadFromFile("pic_ufo.png") || !hitTexture.loadFromFile("pic_ufoDamaged.png")) {
         // 텍스처 로딩 실패 시
         bmeteorActive = false;
         return;
@@ -52,7 +52,15 @@ void Meteor::hit(){
     hits++;
     if(hits >= 2){
         bmeteorActive = false;
+        return;
+    }else{
+        meteorSpeed *= 0.5f;
+        meteorSprite.setTexture(hitTexture);
     }
+    /*if(bmeteorActive){
+        meteorSpeed *= 0.5f;
+        meteorSprite.setTexture(hitTexture);
+    }*/
 }
 
 int Meteor::getHits(){

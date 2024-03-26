@@ -20,6 +20,7 @@ public:
 private:
     Sprite meteorSprite;
     Texture meteorTexture;
+    Texture hitTexture;
     Vector2f meteorSpeed;
     bool bmeteorActive;
     int hits;
