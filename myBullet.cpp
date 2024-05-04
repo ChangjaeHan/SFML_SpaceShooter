@@ -9,7 +9,7 @@ myBullet::myBullet(const Vector2f& initPos) : bbulletActive(true), bulletSpeed(1
         bbulletActive = false;
         return;
     }
-    bulletTexture.setSmooth(true);
+    bulletTexture.setSmooth(false);
     bulletSprite.setTexture(bulletTexture);
     FloatRect bounds = bulletSprite.getLocalBounds();
     bulletSprite.setOrigin(bounds.width / 2, bounds.height / 2);
