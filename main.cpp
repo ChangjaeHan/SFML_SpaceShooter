@@ -14,6 +14,7 @@ using namespace std;
 Texture gameStartButtonTexture, uiTexture;
 Texture backGroundTexture, heartTexture;
 
+
 bool initializeUI(RectangleShape& gameStartButton, Music& uiMusic, Sprite& uiSprite);
 bool initializeGame(Music& gameMusic, SoundBuffer& hitBuffer, Sound& hitSound, Sprite& backGroundSprite);
 void setScore(Font& font, Text& scoreText);
@@ -24,14 +25,15 @@ int main(){
     RenderWindow uiWindow(VideoMode(800,600), "UI Window");
 
     RectangleShape gameStartButton(Vector2f(100,100));
-    //Texture gameStartButtonTexture;
     Music uiMusic;
     Sprite uiSprite;
 
+    //UI 초기화
     if(!initializeUI(gameStartButton, uiMusic, uiSprite)) return -1;
 
     bool gameStart = false;
-    //TODO: Q로직 바꾸기
+
+    //메인 UI화면 기능
     while(uiWindow.isOpen() && !Keyboard::isKeyPressed(Keyboard::Q) && !gameStart){
         Event uiEvent;
         while(uiWindow.pollEvent(uiEvent)){
@@ -39,7 +41,7 @@ int main(){
                 uiWindow.close();
                 return -1;
             }
-            //게임시작 버튼 눌렀는지 확인하는 로직
+            //게임시작 버튼 눌렀는지 확인 로직
             if(uiEvent.type == Event::MouseButtonPressed){
                 if(uiEvent.mouseButton.button == sf::Mouse::Left) {
                     // 마우스 위치 확인
@@ -72,6 +74,8 @@ int main(){
     Font font;
     Text scoreText;
 
+
+    //게임화면 초기화
     if(!initializeGame(gameMusic, hitBuffer, hitSound, backGroundSprite)) return -1;
 
     //스코어판
@@ -88,7 +92,7 @@ int main(){
         hearts[i].setPosition(750-(i+1)*26,20); // 하트를 화면의 왼쪽 상단에 배치
     }
 
-    //객체
+    //객체(총, UFO, 우주선)
     vector<myBullet> bullets;
     vector<Meteor> meteors;
     Vector2f characterPos(400,300);
@@ -100,7 +104,9 @@ int main(){
     float bulletCooltime = 0.2f, meteorSpawnTime = 2.0f;
     float lastBulletTime = 0.0f, elapsedTime = 0.0f;
 
-    srand(time(0));
+    srand(time(0)); //UFO 무작위 스폰 시간
+
+    //메인 게임 화면 기능
     while (gameWindow.isOpen() && !Keyboard::isKeyPressed(Keyboard::Q)){
         Event event;
         while(gameWindow.pollEvent(event)){
@@ -109,6 +115,7 @@ int main(){
             }
         }
 
+        //UFO와 총알 시간 계산
         float currentTime = bulletClock.getElapsedTime().asSeconds();
         float deltaTime = meteorClock.restart().asSeconds();
         elapsedTime += deltaTime;
@@ -120,7 +127,7 @@ int main(){
         }
         for(int i=0; i<meteors.size(); i++){
             meteors[i].updateMeteor();
-            // 화면 아래로 완전히 벗어났는지 확인
+            // 화면 아래로 완전히 벗어났는지 체크
             if (!meteors[i].isMeteorActive() || meteors[i].getMeteorSprite().getPosition().y > gameWindow.getSize().y) 
             {
                 meteors.erase(meteors.begin() + i);
@@ -128,6 +135,7 @@ int main(){
             }
         }
 
+        //우주선(캐릭터) 위치 업데이트
         characterPos = character.handleInput(characterPos);
         characterPos = character.managePos(gameWindow, characterPos);
 
@@ -142,6 +150,9 @@ int main(){
         
         scoreText.setString("Score: " + to_string(score));
 
+
+
+        //화면 및 객체 그리기
         gameWindow.clear();
         gameWindow.draw(backGroundSprite);
         gameWindow.draw(scoreText);
@@ -154,6 +165,7 @@ int main(){
         for (auto& meteor : meteors) {
             meteor.draw(gameWindow);
         }
+
         for(int i=0; i<bullets.size(); i++){
             if(!bullets[i].isBulletActive()){
                 bullets.erase(bullets.begin() + i);
@@ -167,18 +179,20 @@ int main(){
         for (int i = 0; i < meteors.size(); i++) {
             for (int j = 0; j < bullets.size(); j++) {
                 if (meteors[i].getMeteorSprite().getGlobalBounds().intersects(bullets[j].getBulletSprite().getGlobalBounds())) {
-                    // 여기서 충돌 처리 로직을 구현합니다.
+                    // 충돌 처리 로직
                     meteors[i].hit();
                     bullets.erase(bullets.begin() + j); // 총알 제거
                     hitSound.play();
 
                     if(!meteors[i].isMeteorActive()){
                         meteors.erase(meteors.begin() + i);
-                        --i; // 운석 벡터에서 항목을 제거했으므로 인덱스 조정
+                        --i; // UFO 벡터에서 항목을 제거함으로써 인덱스 조정
                         score += 1; // 점수 증가
                     }
                 }
             }
+
+            //캐릭터가 UFO에 충돌했을 경우
             if (meteors[i].getMeteorSprite().getGlobalBounds().intersects(character.getGlobalBounds())){
                 character.hit();
                 meteors.erase(meteors.begin() + i);
@@ -197,6 +211,8 @@ int main(){
         gameWindow.display();
     }
 
+
+    //게임이 끝났을 시 Score 메뉴 창
     RenderWindow scoreWindow(VideoMode(800,600), "Score");
     while(openScore && scoreWindow.isOpen() && !Keyboard::isKeyPressed(Keyboard::Q)){
         Event event;
@@ -206,7 +222,7 @@ int main(){
             }
         }
 
-        scoreText.setPosition(330, 270); // 화면 왼쪽 상단에 위치 설정
+        scoreText.setPosition(330, 270); 
         scoreText.setString("Score: " + to_string(score));
         scoreText.setCharacterSize(30);
         backGroundSprite.setTexture(backGroundTexture); 
@@ -218,6 +234,11 @@ int main(){
     return 0;
 }
 
+
+
+/*
+*   초기화 함수
+*/
 bool initializeUI(RectangleShape& gameStartButton, Music& uiMusic, Sprite& uiSprite){
 
     if(!uiTexture.loadFromFile("pic_UI.jpg")) return false;
