@@ -10,7 +10,6 @@ public:
     myCharacter(const Vector2f& pos); // 생성자
     Vector2f handleInput(Vector2f& pos); // 입력처리
     Vector2f managePos(RenderWindow& window, Vector2f&pos);
-    void updateCharacter(float deltaTime);
     void draw(RenderWindow& window);
     FloatRect getLocalBounds();
     FloatRect getGlobalBounds();

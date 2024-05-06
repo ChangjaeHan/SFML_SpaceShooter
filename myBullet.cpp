@@ -5,7 +5,6 @@ using namespace sf;
 myBullet::myBullet(const Vector2f& initPos) : bbulletActive(true), bulletSpeed(1.0f){
 
     if(!bulletTexture.loadFromFile("pic_myBullet.png")){
-        printf("Bullet is not loading\n");
         bbulletActive = false;
         return;
     }
@@ -22,6 +21,7 @@ Sprite& myBullet::getBulletSprite() {
 }
 
 
+//총알 그리기
 void myBullet::draw(RenderWindow& window){
    
     if(bbulletActive){
@@ -30,11 +30,11 @@ void myBullet::draw(RenderWindow& window){
 
 }
 
+//총알 업데이트
 void myBullet::updateBullet() {
     
     if (bbulletActive) {
-        bulletSprite.move(0, -bulletSpeed); // Move up
-        // Deactivate bullet if it goes off screen
+        bulletSprite.move(0, -bulletSpeed);
         if (bulletSprite.getPosition().y < 0) {
             bbulletActive = false;
         }

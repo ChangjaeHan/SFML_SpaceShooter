@@ -16,26 +16,26 @@ myCharacter::myCharacter(const Vector2f& pos) : lives(3), DamagedMoveScale(0){
     characterSprite.setScale(0.2f, 0.2f);
 }
 
+
+//캐릭터 무브먼트 구현(UP, DOWN, LEFT, RIGHT)
 Vector2f myCharacter::handleInput(Vector2f& pos) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-        //characterSprite.move(0, -0.2);
         pos.y -= 0.2-DamagedMoveScale;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-        //characterSprite.move(0, 0.2);
         pos.y += 0.2-DamagedMoveScale;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-        //characterSprite.move(-0.2, 0);
         pos.x -= 0.2-DamagedMoveScale;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-        //characterSprite.move(0.2, 0);
         pos.x += 0.2-DamagedMoveScale;
     }
     Vector2f updatedPos(pos.x, pos.y);
     return updatedPos;
 }
+
+//캐릭터 Position 업데이트
 Vector2f myCharacter::managePos(RenderWindow& window, Vector2f& pos){
     FloatRect bounds = characterSprite.getLocalBounds();
     if(pos.x < bounds.width / 2 * characterSprite.getScale().x){
@@ -55,10 +55,6 @@ Vector2f myCharacter::managePos(RenderWindow& window, Vector2f& pos){
 }
 
 
-void myCharacter::updateCharacter(float deltaTime) {
-    // 캐릭터의 위치 업데이트 또는 기타 상태 업데이트
-}
-
 void myCharacter::draw(sf::RenderWindow& window) {
     window.draw(characterSprite);
 }
@@ -75,10 +71,11 @@ void myCharacter::setPosition(const Vector2f& pos){
     characterSprite.setPosition(pos);
 }
 
+
+//캐릭터 충돌시 처리 메소드
 void myCharacter::hit() {
     if (lives > 0) {
         --lives;
-        // 추가적인 충돌 처리 로직 (예: 피격 애니메이션 재생)
         if(lives == 1){
             characterSprite.setTexture(hitTexture);
             DamagedMoveScale += 0.1f;
